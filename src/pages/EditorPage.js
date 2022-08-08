@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import Client from "../components/Client";
+import Editor from "../components/editor";
 
 const EditorPage = () => {
   const [clients, setClients] = useState([
     { socketId: 1, username: "Rakesh K" },
     { socketId: 2, username: "Jonn Doe" },
+    { socketId: 3, username: "Jone Doe" },
   ]);
 
   return (
@@ -21,8 +23,12 @@ const EditorPage = () => {
             ))}
           </div>
         </div>
+        <button className="btn copyBtn">Copy ROOM ID</button>
+        <button className="btn leaveBtn">Leave</button>
       </div>
-      <div className="editorWrap">Editor goes here...</div>
+      <div className="editorWrap">
+        <Editor />
+      </div>
     </div>
   );
 };
