@@ -1,9 +1,32 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+// import Codemirror from 'codemirror/lib/codemirror.js';
+import 'codemirror/mode/javascript/javascript'
+import Codemirror from 'codemirror';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/dracula.css';
+import 'codemirror/addon/edit/closetag';
+import 'codemirror/addon/edit/closebrackets';
 
-const editor = () => {
+const Editor = () => {
+   useEffect(() => {
+      async function init(){
+         Codemirror.fromTextArea(document.getElementById('realtimeEditor'), {
+            mode: {name: 'javascript', json: true},
+            theme: 'dracula',
+            autoCloseTags: true,
+            autoCloseBrackets: true,
+            lineNumbers: true,
+
+         });
+      }
+
+      init();
+   }, []);
+
+
   return (
-    <div>editor goes here..</div>
+    <textarea id='realtimeEditor'></textarea>
   )
 }
 
-export default editor;
+export default Editor;
