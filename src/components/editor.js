@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 // import Codemirror from 'codemirror/lib/codemirror.js';
 import 'codemirror/mode/javascript/javascript'
 import Codemirror from 'codemirror';
@@ -6,11 +6,13 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/dracula.css';
 import 'codemirror/addon/edit/closetag';
 import 'codemirror/addon/edit/closebrackets';
+import ACTIONS from '../Actions';
 
-const Editor = () => {
+const Editor = ({socketRef,roomId}) => {
+   const editorRef = useRef(null);
    useEffect(() => {
       async function init(){
-         Codemirror.fromTextArea(document.getElementById('realtimeEditor'), {
+         editorRef.current = Codemirror.fromTextArea(document.getElementById('realtimeEditor'), {
             mode: {name: 'javascript', json: true},
             theme: 'dracula',
             autoCloseTags: true,
@@ -18,10 +20,46 @@ const Editor = () => {
             lineNumbers: true,
 
          });
+
+        
+
+         editorRef.current.on('change',(instance, changes) =>{
+            
+            console.log('changes',changes);
+            const { origin} = changes;
+            const code = instance.getValue();
+            if(origin !== 'setValue'){
+              socketRef.current.emit(ACTIONS.CODE_CHANGE, {
+                  roomId,
+                  code,
+              })
+            }
+            console.log(code)
+         });
+
+         
+
       }
 
       init();
    }, []);
+
+   useEffect(() =>{
+
+      if(socketRef.current)
+      {
+         socketRef.current.on(ACTIONS.CODE_CHANGE, ({code}) => {
+                 
+            if(code!==null)
+            {
+               editorRef.current.setValue(code);
+            }
+              
+         });
+
+      }
+     
+   },[socketRef.current]);
 
 
   return (
